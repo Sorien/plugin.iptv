@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 try:
-    from typing import List, Dict
+    from typing import List, Dict, Callable
 except:
     pass
 
@@ -86,13 +86,17 @@ class NetConnectionError(IPTVException):
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
 
 
+def dummy_progress(progress):
+    pass
+
+
 class IPTVClient(object):
     def __init__(self, storage_dir, file_name):
         self._storage_path = storage_dir
         self._storage_file = os.path.join(self._storage_path, file_name)
 
-    def channels(self):
-        # type: () -> List[Channel]
+    def channels(self, progress=dummy_progress):
+        # type: (Callable[[None], int] or None) -> List[Channel]
         raise NotImplementedError("Should have implemented this")
 
     def channel_stream_info(self, channel_id):
@@ -103,8 +107,8 @@ class IPTVClient(object):
         # type: (str) -> StreamInfo
         raise NotImplementedError("Should have implemented this")
 
-    def epg(self, channels, from_date, to_date):
-        # type: (List[str],datetime,datetime) -> Dict[str, List[Programme]]
+    def epg(self, channels, from_date, to_date, progress=dummy_progress):
+        # type: (List[str], datetime, datetime, Callable[[None], int] or None) -> Dict[str, List[Programme]]
         raise NotImplementedError("Should have implemented this")
 
     def archive_days(self):

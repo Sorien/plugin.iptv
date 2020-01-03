@@ -3,9 +3,10 @@ import datetime
 import time
 import iptv.exports
 import xbmc
+import xbmcgui
 
 try:
-    from typing import List, Dict
+    from typing import List, Dict, Callable
 except:
     pass
 
@@ -28,6 +29,7 @@ class IPTVUpdateService(xbmc.Monitor):
     def __init__(self):
         # type: () -> None
         self.updating = False
+        self.pd = None
         xbmc.Monitor.__init__(self)
         log('service started')
         self.addon = self.create_addon()
@@ -59,7 +61,7 @@ class IPTVUpdateService(xbmc.Monitor):
             self.addon = self.create_addon()  # refresh for updated settings!
             if not self.abortRequested():
                 try:
-                    res = self._update()
+                    res = self._update(self.notification_process)
                     log(res)
                     if res == 1:
                         self.notify(_('playlist_created'), False)
@@ -76,12 +78,12 @@ class IPTVUpdateService(xbmc.Monitor):
         log('Next update %s' % dt)
         self._next_update = dt
 
-    def fetch_channels(self):
-        # type: () -> List[Channel]
+    def fetch_channels(self, progress):
+        # type: (Callable[[None], int] or None) -> List[Channel]
         raise NotImplementedError("Should have implemented this")
 
-    def fetch_epg(self, channels):
-        # type: (List[Channel]) -> Dict[str, List[Programme]]
+    def fetch_epg(self, channels, progress):
+        # type: (List[Channel], Callable[[None], int] or None) -> Dict[str, List[Programme]]
         raise NotImplementedError("Should have implemented this")
 
     def playlist_path(self):
@@ -101,7 +103,25 @@ class IPTVUpdateService(xbmc.Monitor):
     def prepareUpdate(self):
         pass
 
-    def _update(self):
+    def notification_process(self, text, percent):
+        if self.pd is None:
+            if percent == 100:
+                return
+            self.pd = xbmcgui.DialogProgressBG()
+            self.pd.create(self.addon.getAddonInfo('name'), text)
+
+        self.pd.update(percent, self.addon.getAddonInfo('name'), text)
+
+        if percent == 100:
+            time.sleep(1)
+            self.pd.close()
+            self.pd = None
+
+    def dummy_notification_progress(self, text, percent):
+        pass
+
+    def _update(self, callback=dummy_notification_progress):
+        # type: (Callable[[str, int], None]) -> None or int
         result = None
 
         _playlist_path = self.playlist_path()
@@ -112,11 +132,14 @@ class IPTVUpdateService(xbmc.Monitor):
 
         self.prepareUpdate()
 
-        _channels = self.fetch_channels()
+        callback(_('updating_playlist'), 0)
+
+        channels = self.fetch_channels(lambda percent: callback(_('updating_playlist'), percent // 2))
 
         try:
-            log('Updating playlist [%d channels]' % len(_channels))
-            iptv.exports.create_m3u(_playlist_path, _channels, self.make_url)
+            log('Updating playlist [%d channels]' % len(channels))
+            iptv.exports.create_m3u(_playlist_path, channels, self.make_url)
+
             result = 1
         except IOError as e:
             log(str(e))
@@ -124,8 +147,15 @@ class IPTVUpdateService(xbmc.Monitor):
 
         if _epg_path:
             try:
-                log('Updating EPG')
-                iptv.exports.create_epg(_epg_path, self.fetch_epg(_channels))
+                log('Updating Epg')
+
+                callback(_('updating_epg'), 50)
+
+                epg = self.fetch_epg(channels, lambda percent: callback(_('updating_epg'), 50 + (percent // 2)))
+                iptv.exports.create_epg(_epg_path, epg)
+
+                callback(_('updating_epg'), 100)
+
                 result = 2
             except IOError as e:
                 log(str(e))
