@@ -81,7 +81,7 @@ class IPTVUpdateService(xbmc.Monitor):
         raise NotImplementedError("Should have implemented this")
 
     def fetch_epg(self, channels):
-        # type: (List[Channel]) -> Dict[int, List[Programme]]
+        # type: (List[Channel]) -> Dict[str, List[Programme]]
         raise NotImplementedError("Should have implemented this")
 
     def playlist_path(self):

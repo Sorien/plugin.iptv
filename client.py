@@ -17,7 +17,7 @@ class Base:
 class Channel(Base):
     def __init__(self):
         # channel Unique Id
-        self.id = ''
+        self.id = ''  # type: str
         # channel name
         self.name = ''
         # channel icon absolute url
@@ -41,11 +41,11 @@ class StreamInfo(Base):
 
 class Programme(Base):
     def __init__(self):
-        self.id = ''
+        self.id = ''  # type: str
         # Programme Start Time in UTC
-        self.start_time = None  # type: datetime
+        self.start_time = None  # type: datetime or None
         # Programme End Time in UTC
-        self.end_time = None
+        self.end_time = None # type: datetime or None
         self.title = ''
         self.description = ''
         self.cover = ''

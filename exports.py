@@ -54,13 +54,13 @@ def create_m3u(file_name, channels, url_callback=build_url):
 
 
 def create_epg(file_name, epg):
-    # type: (str, Dict[int, List[Programme]]) -> None
+    # type: (str, Dict[str, List[Programme]]) -> None
     with io.open(file_name, 'w', encoding='utf8') as file:
         file.write(u'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
         file.write(u'<tv>\n')
 
         for channel_id in epg:
-            file.write(u'<channel id="%d">\n' % channel_id)
+            file.write(u'<channel id="%s">\n' % channel_id)
             # file.write(u'<display-name>%s</display-name>\n' % c['title'])
             file.write(u'</channel>\n')
 
