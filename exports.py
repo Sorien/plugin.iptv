@@ -28,7 +28,7 @@ def html_escape(text):
 
 
 def build_url(channel, catchup):
-    return channel.liveUrl if not catchup else channel.liveUrl
+    pass
 
 
 def create_m3u(file_name, channels, url_callback=build_url):

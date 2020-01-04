@@ -100,7 +100,7 @@ class IPTVUpdateService(xbmc.Monitor):
             return self.addon.url_for(self.addon.play_channel_route, channel.id)
         return self.addon.url_for(self.addon.play_programme_by_time_route, channel.id, '${start}', '${stop}')
 
-    def prepareUpdate(self):
+    def prepare_update(self):
         pass
 
     def notification_process(self, text, percent):
@@ -120,8 +120,11 @@ class IPTVUpdateService(xbmc.Monitor):
     def dummy_notification_progress(self, text, percent):
         pass
 
-    def _update(self, callback=dummy_notification_progress):
-        # type: (Callable[[str, int], None]) -> None or int
+    def _update(self, callback=None):
+        # type: (Callable[[str, int], None] or None) -> None or int
+        if callback is None:
+            callback = self.dummy_notification_progress
+
         result = None
 
         _playlist_path = self.playlist_path()
@@ -130,7 +133,7 @@ class IPTVUpdateService(xbmc.Monitor):
         if not _playlist_path or (not (_playlist_path or _epg_path)):
             return result
 
-        self.prepareUpdate()
+        self.prepare_update()
 
         callback(_('updating_playlist'), 0)
 
