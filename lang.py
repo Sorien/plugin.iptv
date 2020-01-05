@@ -19,6 +19,8 @@ _lang['en']['day_6'] = 'saturday'
 _lang['en']['day_7'] = 'sunday'
 _lang['en']['day_after'] = 'the day after'
 _lang['en']['day_before'] = 'the day before'
+_lang['en']['creating_playlist'] = 'Creating M3U Playlist'
+_lang['en']['creating_epg'] = 'Creating EPG'
 
 _lang['sk'] = {}
 _lang['sk']['playlist_created'] = 'M3U Playlist bol vytvorený'
@@ -37,6 +39,8 @@ _lang['sk']['day_6'] = 'sobota'
 _lang['sk']['day_7'] = 'nedeľa'
 _lang['sk']['day_after'] = 'nasledujúci deň'
 _lang['sk']['day_before'] = 'predošlý deň'
+_lang['sk']['creating_playlist'] = 'Vytváram M3U Playlist'
+_lang['sk']['creating_epg'] = 'Vytváram EPG'
 
 _code = xbmc.getLanguage(xbmc.ISO_639_1)
 

@@ -27,11 +27,9 @@ class EpgNotCreated(IPTVException):
 class IPTVUpdateService(xbmc.Monitor):
 
     def __init__(self):
-        # type: () -> None
         self.updating = False
-        self.pd = None
+        self.progress_dialog = None
         xbmc.Monitor.__init__(self)
-        log('service started')
         self.addon = self.create_addon()
         ts = self.addon.getSetting('__next_update')
         self._next_update = datetime.datetime.now() if ts == '' else datetime.datetime.fromtimestamp(float(ts))
@@ -44,13 +42,8 @@ class IPTVUpdateService(xbmc.Monitor):
         raise NotImplementedError("Should have implemented this")
 
     def notify(self, text, error=False):
-        icon = 'DefaultIconError.png' if error else ''
-        try:
-            text = text.encode("utf-8") if type(text) is unicode else text
-            xbmc.executebuiltin('Notification("%s","%s",5000,%s)' %
-                                (self.addon.getAddonInfo('name').encode("utf-8"), text, icon))
-        except NameError:
-            xbmc.executebuiltin('Notification("%s","%s",5000,%s)' % (self.addon.getAddonInfo('name'), text, icon))
+        icon = xbmcgui.NOTIFICATION_ERROR if error else xbmcgui.NOTIFICATION_INFO
+        xbmcgui.Dialog().notification(self.addon.getAddonInfo('name'), text, icon, 4000)
 
     def onSettingsChanged(self):
         if self.updating:
@@ -104,18 +97,18 @@ class IPTVUpdateService(xbmc.Monitor):
         pass
 
     def notification_process(self, text, percent):
-        if self.pd is None:
+        if self.progress_dialog is None:
             if percent == 100:
                 return
-            self.pd = xbmcgui.DialogProgressBG()
-            self.pd.create(self.addon.getAddonInfo('name'), text)
+            self.progress_dialog = xbmcgui.DialogProgressBG()
+            self.progress_dialog.create(self.addon.getAddonInfo('name'), text)
 
-        self.pd.update(percent, self.addon.getAddonInfo('name'), text)
+        self.progress_dialog.update(percent, self.addon.getAddonInfo('name'), text)
 
         if percent == 100:
             time.sleep(1)
-            self.pd.close()
-            self.pd = None
+            self.progress_dialog.close()
+            self.progress_dialog = None
 
     def dummy_notification_progress(self, text, percent):
         pass
@@ -135,12 +128,12 @@ class IPTVUpdateService(xbmc.Monitor):
 
         self.prepare_update()
 
-        callback(_('updating_playlist'), 0)
+        callback(_('creating_playlist'), 0)
 
-        channels = self.fetch_channels(lambda percent: callback(_('updating_playlist'), percent // 2))
+        channels = self.fetch_channels(lambda percent: callback(_('creating_playlist'), percent // 2))
 
         try:
-            log('Updating playlist [%d channels]' % len(channels))
+            log('Creating playlist [%d channels]' % len(channels))
             iptv.exports.create_m3u(_playlist_path, channels, self.make_url)
 
             result = 1
@@ -150,14 +143,13 @@ class IPTVUpdateService(xbmc.Monitor):
 
         if _epg_path:
             try:
-                log('Updating Epg')
+                callback(_('creating_epg'), 50)
 
-                callback(_('updating_epg'), 50)
-
-                epg = self.fetch_epg(channels, lambda percent: callback(_('updating_epg'), 50 + (percent // 2)))
+                epg = self.fetch_epg(channels, lambda percent: callback(_('creating_epg'), 50 + (percent // 2)))
+                log('Creating XMLTV EPG')
                 iptv.exports.create_epg(_epg_path, epg)
 
-                callback(_('updating_epg'), 100)
+                callback(_('creating_epg'), 100)
 
                 result = 2
             except IOError as e:
