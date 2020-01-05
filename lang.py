@@ -21,6 +21,8 @@ _lang['en']['day_after'] = 'the day after'
 _lang['en']['day_before'] = 'the day before'
 _lang['en']['creating_playlist'] = 'Creating M3U Playlist'
 _lang['en']['creating_epg'] = 'Creating EPG'
+_lang['en']['iptv_not_installed'] = 'IPTV Simple Client Add-on is not installed'
+_lang['en']['iptv_configure'] = 'Change configuration of IPTV Simple Client according {}'
 
 _lang['sk'] = {}
 _lang['sk']['playlist_created'] = 'M3U Playlist bol vytvorený'
@@ -41,6 +43,8 @@ _lang['sk']['day_after'] = 'nasledujúci deň'
 _lang['sk']['day_before'] = 'predošlý deň'
 _lang['sk']['creating_playlist'] = 'Vytváram M3U Playlist'
 _lang['sk']['creating_epg'] = 'Vytváram EPG'
+_lang['sk']['iptv_not_installed'] = 'IPTV Simple Client Add-on nie je nainštalovaný'
+_lang['sk']['iptv_configure'] = 'Upraviť konfiguraciu IPTV Simple Client podla {}'
 
 _code = xbmc.getLanguage(xbmc.ISO_639_1)
 

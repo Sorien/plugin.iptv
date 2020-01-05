@@ -45,6 +45,9 @@ class IPTVUpdateService(xbmc.Monitor):
         icon = xbmcgui.NOTIFICATION_ERROR if error else xbmcgui.NOTIFICATION_INFO
         xbmcgui.Dialog().notification(self.addon.getAddonInfo('name'), text, icon, 4000)
 
+    def updated_after_settings_changed(self):
+        pass
+
     def onSettingsChanged(self):
         if self.updating:
             return
@@ -56,6 +59,9 @@ class IPTVUpdateService(xbmc.Monitor):
                 try:
                     res = self._update(self.notification_process)
                     log(res)
+
+                    self.updated_after_settings_changed()
+
                     if res == 1:
                         self.notify(_('playlist_created'), False)
                     if res == 2:
