@@ -37,7 +37,6 @@ def create_m3u(file_name, channels, url_callback=build_url):
         file.write(u'#EXTM3U\n')
 
         for c in channels:
-            # encoded_channel = comp_urlencode({'c': c.__dict__})
             live_url = url_callback(c, False)
             if live_url:
                 file.write(u'#EXTINF:-1')

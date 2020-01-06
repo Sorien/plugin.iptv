@@ -45,7 +45,7 @@ class Programme(Base):
         # Programme Start Time in UTC
         self.start_time = None  # type: datetime or None
         # Programme End Time in UTC
-        self.end_time = None # type: datetime or None
+        self.end_time = None  # type: datetime or None
         self.title = ''
         self.description = ''
         self.cover = ''
