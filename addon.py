@@ -19,7 +19,6 @@ class IPTVAddon(xbmcaddon.Addon):
     _handle = int(sys.argv[1]) if len(sys.argv) > 1 else -1
 
     def __init__(self):
-        # type: () -> None
         xbmcaddon.Addon.__init__(self)
         self.client = self.create_client()
         self._router = routing.Plugin()
@@ -73,21 +72,25 @@ class IPTVAddon(xbmcaddon.Addon):
             import inputstreamhelper
             is_helper = inputstreamhelper.Helper(info.protocol, drm=info.drm)
             if is_helper.check_inputstream():
-                playitem = xbmcgui.ListItem(path=info.url)
-                playitem.setProperty('inputstreamaddon', is_helper.inputstream_addon)
-                playitem.setProperty('inputstream.adaptive.manifest_type', info.protocol)
-                playitem.setProperty('inputstream.adaptive.license_type', info.drm)
-                playitem.setProperty('inputstream.adaptive.license_key', info.key)
+                item = xbmcgui.ListItem(path=info.url)
+                item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
+                item.setProperty('inputstream.adaptive.manifest_type', info.protocol)
+                item.setProperty('inputstream.adaptive.license_type', info.drm)
+                item.setProperty('inputstream.adaptive.license_key', info.key)
                 if info.max_bandwidth:
-                    playitem.setProperty('inputstream.adaptive.max_bandwidth', info.max_bandwidth)
-                xbmcplugin.setResolvedUrl(self._handle, True, playitem)
+                    item.setProperty('inputstream.adaptive.max_bandwidth', info.max_bandwidth)
+                if info.user_agent:
+                    item.setProperty('inputstream.adaptive.stream_headers', 'User-Agent=' + info.user_agent)
+                xbmcplugin.setResolvedUrl(self._handle, True, item)
                 return
 
         if info.drm == '':
-            playitem = xbmcgui.ListItem(path=info.url)
-            xbmcplugin.setResolvedUrl(self._handle, True, playitem)
-        else:
-            xbmcplugin.setResolvedUrl(self._handle, False, xbmcgui.ListItem())
+            user_agent = ('|' + info.user_agent) if info.user_agent else ''
+            item = xbmcgui.ListItem(path=info.url + user_agent)
+            xbmcplugin.setResolvedUrl(self._handle, True, item)
+            return
+
+        xbmcplugin.setResolvedUrl(self._handle, False, xbmcgui.ListItem())
 
     def play_channel_route(self, channel_id):
         self._play(channel_id, self.channel_stream_info)

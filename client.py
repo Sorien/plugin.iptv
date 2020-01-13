@@ -37,6 +37,7 @@ class StreamInfo(Base):
         self.drm = ''
         self.key = ''
         self.max_bandwidth = None
+        self.user_agent = ''
 
 
 class Programme(Base):
@@ -57,7 +58,6 @@ class Programme(Base):
         self.producers = []  # type: List[str]
         self.seasonNo = None
         self.episodeNo = None
-
         self.is_replyable = False
         # programme metadata
         self.metadata = {}  # type: Dict[str, int]
@@ -81,9 +81,6 @@ class StreamNotResolvedException(IPTVException):
 
 class NetConnectionError(IPTVException):
     pass
-
-
-UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
 
 
 def dummy_progress(progress):
