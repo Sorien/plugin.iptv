@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
-import io
 try:
     from typing import List, Dict, Callable
 except:
     pass
 
+from io import open
 from iptv.client import Channel, Programme
-
-try:
-    # Python 3.x
-    from urllib.parse import urlencode as comp_urlencode
-except ImportError:
-    # Python 2.5+
-    from urllib import urlencode as comp_urlencode
 
 html_escape_table = {
     "&": "&amp;",
@@ -27,13 +20,9 @@ def html_escape(text):
     return "".join(html_escape_table.get(c, c) for c in text)
 
 
-def build_url(channel, catchup):
-    pass
-
-
-def create_m3u(file_name, channels, url_callback=build_url):
+def create_m3u(file_name, channels, url_callback):
     # type: (str, List[Channel], Callable[[Channel, bool], str]) -> None
-    with io.open(file_name, 'w', encoding='utf8') as file:
+    with open(file_name, 'w', encoding='utf8') as file:
         file.write(u'#EXTM3U\n')
 
         for c in channels:
@@ -54,13 +43,12 @@ def create_m3u(file_name, channels, url_callback=build_url):
 
 def create_epg(file_name, epg):
     # type: (str, Dict[str, List[Programme]]) -> None
-    with io.open(file_name, 'w', encoding='utf8') as file:
+    with open(file_name, 'w', encoding='utf8') as file:
         file.write(u'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
         file.write(u'<tv>\n')
 
         for channel_id in epg:
             file.write(u'<channel id="%s">\n' % channel_id)
-            # file.write(u'<display-name>%s</display-name>\n' % c['title'])
             file.write(u'</channel>\n')
 
         for channel_id in epg:
