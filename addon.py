@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import sys
 import xbmcaddon
 import xbmcgui
@@ -140,7 +141,7 @@ class IPTVAddon(xbmcaddon.Addon):
 
     def archive_days_route(self, channel_id, channel_name):
         now = datetime.now()
-        xbmcplugin.setPluginCategory(self._handle, 'Replay' + ' / ' + channel_name)
+        xbmcplugin.setPluginCategory(self._handle, _('archive') + ' / ' + channel_name)
         for day in range(0, self.client.archive_days() + 1):
             d = now - timedelta(days=day)
             title = _('today') if day == 0 else _('yesterday') if day == 1 else d.strftime('%d. %m.')

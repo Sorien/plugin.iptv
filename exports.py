@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 try:
     from typing import List, Dict, Callable
 except:
@@ -28,54 +29,53 @@ def create_m3u(file_name, channels, url_callback):
         for c in channels:
             live_url = url_callback(c, False)
             if live_url:
-                file.write(u'#EXTINF:-1')
-                file.write(u' tvg-id="%s"' % c.id)
+                file.write('#EXTINF:-1')
+                file.write(' tvg-id="%s"' % c.id)
                 if c.logo:
-                    file.write(u' tvg-logo="%s"' % c.logo)
+                    file.write(' tvg-logo="%s"' % c.logo)
 
                 catchup_url = url_callback(c, True)
                 if catchup_url and c.archive_days > 0:
-                    file.write(u' catchup-days="%d" catchup-source="%s"' % (c.archive_days, catchup_url))
+                    file.write(' catchup-days="%d" catchup-source="%s"' % (c.archive_days, catchup_url))
 
-                file.write(u',%s\n' % c.name)
-                file.write(u'%s\n' % live_url)
+                file.write(',%s\n' % c.name)
+                file.write('%s\n' % live_url)
 
 
 def create_epg(file_name, epg):
     # type: (str, Dict[str, List[Programme]]) -> None
     with open(file_name, 'w', encoding='utf8') as file:
-        file.write(u'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
-        file.write(u'<tv>\n')
+        file.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
+        file.write('<tv>\n')
 
         for channel_id in epg:
-            file.write(u'<channel id="%s">\n' % channel_id)
-            file.write(u'</channel>\n')
+            file.write('<channel id="%s">\n' % channel_id)
+            file.write('</channel>\n')
 
         for channel_id in epg:
             for p in epg[channel_id]:
-                file.write(u'<programme channel="%s" start="%s" stop="%s">\n' % (
+                file.write('<programme channel="%s" start="%s" stop="%s">\n' % (
                     channel_id, p.start_time.strftime('%Y%m%d%H%M%S'), p.end_time.strftime('%Y%m%d%H%M%S')))
                 if p.title:
-                    file.write(u'<title>%s</title>\n' % html_escape(p.title))
+                    file.write('<title>%s</title>\n' % html_escape(p.title))
                 if p.description:
-                    file.write(u'<desc>%s</desc>\n' % html_escape(p.description))
+                    file.write('<desc>%s</desc>\n' % html_escape(p.description))
                 if p.cover:
-                    file.write(u'<icon src="%s"/>\n' % html_escape(p.cover))
+                    file.write('<icon src="%s"/>\n' % html_escape(p.cover))
                 if p.genres:
                     file.write('<category>%s</category>\n' % ', '.join(p.genres))
                 if p.actors or p.directors or p.writers or p.producers:
-                    file.write(u'<credits>\n')
+                    file.write('<credits>\n')
                     for actor in p.actors:
-                        file.write(u'<actor>%s</actor>\n' % html_escape(actor))
+                        file.write('<actor>%s</actor>\n' % html_escape(actor))
                     for director in p.directors:
-                        file.write(u'<director>%s</director>\n' % html_escape(director))
+                        file.write('<director>%s</director>\n' % html_escape(director))
                     for writer in p.writers:
-                        file.write(u'<writer>%s</writer>\n' % html_escape(writer))
+                        file.write('<writer>%s</writer>\n' % html_escape(writer))
                     for producer in p.producers:
-                        file.write(u'<producer>%s</producer>\n' % html_escape(producer))
-                    file.write(u'</credits>\n')
+                        file.write('<producer>%s</producer>\n' % html_escape(producer))
+                    file.write('</credits>\n')
                 if p.seasonNo and p.episodeNo:
-                    file.write(u'<episode-num system="xmltv_ns">%d.%d.</episode-num>\n' %
-                               (p.seasonNo - 1, p.episodeNo - 1))
-                file.write(u'</programme>\n')
-        file.write(u'</tv>\n')
+                    file.write('<episode-num system="xmltv_ns">%d.%d.</episode-num>\n' % (p.seasonNo - 1, p.episodeNo - 1))
+                file.write('</programme>\n')
+        file.write('</tv>\n')
