@@ -61,43 +61,41 @@ class IPTVAddon(xbmcaddon.Addon):
         # type: (str) -> StreamInfo
         return self.client.programme_stream_info(programme_id)
 
-    def _play(self, id, func):
-        # type: (str, Callable[[str], StreamInfo]) -> None
-        info = func(id)
-
-        if not info:
+    def _play(self, stream_info):
+        # type: (StreamInfo) -> None
+        if not stream_info:
             xbmcplugin.setResolvedUrl(self._handle, False, xbmcgui.ListItem())
             return
 
-        if info.drm == 'widevine':
+        if stream_info.drm == 'widevine':
             import inputstreamhelper
-            is_helper = inputstreamhelper.Helper(info.protocol, drm=info.drm)
+            is_helper = inputstreamhelper.Helper(stream_info.protocol, drm=stream_info.drm)
             if is_helper.check_inputstream():
-                item = xbmcgui.ListItem(path=info.url)
+                item = xbmcgui.ListItem(path=stream_info.url)
                 item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
-                item.setProperty('inputstream.adaptive.manifest_type', info.protocol)
-                item.setProperty('inputstream.adaptive.license_type', info.drm)
-                item.setProperty('inputstream.adaptive.license_key', info.key)
-                if info.max_bandwidth:
-                    item.setProperty('inputstream.adaptive.max_bandwidth', info.max_bandwidth)
-                if info.user_agent:
-                    item.setProperty('inputstream.adaptive.stream_headers', 'User-Agent=' + info.user_agent)
+                item.setProperty('inputstream.adaptive.manifest_type', stream_info.protocol)
+                item.setProperty('inputstream.adaptive.license_type', stream_info.drm)
+                item.setProperty('inputstream.adaptive.license_key', stream_info.key)
+                if stream_info.max_bandwidth:
+                    item.setProperty('inputstream.adaptive.max_bandwidth', stream_info.max_bandwidth)
+                if stream_info.user_agent:
+                    item.setProperty('inputstream.adaptive.stream_headers', 'User-Agent=' + stream_info.user_agent)
                 xbmcplugin.setResolvedUrl(self._handle, True, item)
                 return
 
-        if info.drm == '':
-            user_agent = ('|' + info.user_agent) if info.user_agent else ''
-            item = xbmcgui.ListItem(path=info.url + user_agent)
+        if stream_info.drm == '':
+            user_agent = ('|' + stream_info.user_agent) if stream_info.user_agent else ''
+            item = xbmcgui.ListItem(path=stream_info.url + user_agent)
             xbmcplugin.setResolvedUrl(self._handle, True, item)
             return
 
         xbmcplugin.setResolvedUrl(self._handle, False, xbmcgui.ListItem())
 
     def play_channel_route(self, channel_id):
-        self._play(channel_id, self.channel_stream_info)
+        self._play(self.channel_stream_info(channel_id))
 
     def play_programme_route(self, programme_id):
-        self._play(programme_id, self.programme_stream_info)
+        self._play(self.programme_stream_info(programme_id))
 
     def play_programme_by_time_route(self, channel_id, start, stop):
         epg = self.epg([channel_id], start, stop)
@@ -141,7 +139,7 @@ class IPTVAddon(xbmcaddon.Addon):
 
     def archive_days_route(self, channel_id, channel_name):
         now = datetime.now()
-        xbmcplugin.setPluginCategory(self._handle, _('archive') + ' / ' + channel_name)
+        xbmcplugin.setPluginCategory(self._handle, 'Replay' + ' / ' + channel_name)
         for day in range(0, self.client.archive_days() + 1):
             d = now - timedelta(days=day)
             title = _('today') if day == 0 else _('yesterday') if day == 1 else d.strftime('%d. %m.')
