@@ -7,7 +7,7 @@ import xbmcplugin
 import routing
 
 try:
-    from typing import Callable, List, Dict
+    from typing import List, Dict
 except:
     pass
 
