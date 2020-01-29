@@ -59,8 +59,6 @@ class IPTVUpdateService(xbmc.Monitor):
             if not self.abortRequested():
                 try:
                     res = self._update(self.notification_process)
-                    log(res)
-
                     self.updated_after_settings_changed()
 
                     if res == 1:

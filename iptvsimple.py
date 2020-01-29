@@ -13,14 +13,14 @@ def configure_iptvsimple(m3u_file, xmltv_file, plugin_name):
         xbmc.executeJSONRPC('{{"jsonrpc":"2.0","id":1,"method":"Addons.SetAddonEnabled","params":{{"addonid":"{}","enabled":true}}}}'.format(IPTV_SIMPLE_ID))
         addon = xbmcaddon.Addon(IPTV_SIMPLE_ID)
     except:
-        xbmcgui.Dialog().ok(plugin_name, _('iptv_not_installed'))
+        xbmcgui.Dialog().ok(plugin_name, _('iptv_simple_not_installed'))
         return
 
     if not ((m3u_file and (addon.getSetting('m3uPath') != m3u_file)) or
             (xmltv_file and (addon.getSetting('epgPath') != xmltv_file))):
         return
 
-    if not xbmcgui.Dialog().yesno(plugin_name, _('iptv_configure').format(plugin_name)):
+    if not xbmcgui.Dialog().yesno(plugin_name, _('iptv_simple_configure').format(plugin_name)):
         return
 
     xbmc.executeJSONRPC('{{"jsonrpc":"2.0","id":1,"method":"Addons.SetAddonEnabled","params":{{"addonid":"{}","enabled":false}}}}'.format(IPTV_SIMPLE_ID))
