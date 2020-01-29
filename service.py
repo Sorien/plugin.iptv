@@ -59,8 +59,6 @@ class IPTVUpdateService(xbmc.Monitor):
             if not self.abortRequested():
                 try:
                     res = self._update(self.notification_process)
-                    log(res)
-
                     self.updated_after_settings_changed()
 
                     if res == 1:
@@ -113,7 +111,6 @@ class IPTVUpdateService(xbmc.Monitor):
         self.progress_dialog.update(percent, self.addon.getAddonInfo('name'), text)
 
         if percent == 100:
-            time.sleep(1)
             self.progress_dialog.close()
             self.progress_dialog = None
 
@@ -156,12 +153,12 @@ class IPTVUpdateService(xbmc.Monitor):
                 log('Creating XMLTV EPG')
                 iptv.exports.create_epg(_epg_path, epg)
 
-                callback(_('creating_epg'), 100)
-
                 result = 2
             except IOError as e:
                 log(str(e))
                 raise EpgNotCreated()
+
+        callback('', 100)
 
         return result
 
