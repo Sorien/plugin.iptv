@@ -31,14 +31,23 @@ class Channel(Base):
         self.metadata = {}  # type: Dict[str, int]
 
 
+class WidevineDRM(Base):
+    def __init__(self):
+        self.licence_key = ''
+        self.license_data = ''
+        self.server_certificate = ''
+        self.media_renewal_url = ''
+        self.media_renewal_time = 0
+
+
 class StreamInfo(Base):
     def __init__(self):
         self.protocol = ''
         self.url = ''
-        self.drm = ''
-        self.key = ''
+        self.drm = None  # type: None or WidevineDRM
         self.max_bandwidth = None
         self.user_agent = ''
+        self.headers = {}
 
 
 class Programme(Base):
