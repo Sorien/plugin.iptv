@@ -31,11 +31,22 @@ class Channel(Base):
         self.metadata = {}  # type: Dict[str, int]
 
 
+class WidevineLicenceKey(Base):
+    def __init__(self):
+        self.url = ''
+        self.headers = {}
+        self.request = ''
+        self.response = ''
+
+    def to_string(self):
+        return '%s|%s|%s|%s' % (self.url, self.request, '&'.join(['%s=%s' % (k, v) for (k, v) in self.headers]), self.response)
+
+
 class WidevineDRM(Base):
     def __init__(self):
-        self.licence_key = ''
+        self.licence_key = WidevineLicenceKey()
         self.license_data = ''
-        self.server_certificate = ''
+        self.server_certificate = ''  # base64 encoded string
         self.media_renewal_url = ''
         self.media_renewal_time = 0
 

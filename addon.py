@@ -75,7 +75,7 @@ class IPTVAddon(xbmcaddon.Addon):
                 item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
                 item.setProperty('inputstream.adaptive.manifest_type', stream_info.protocol)
                 item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                item.setProperty('inputstream.adaptive.license_key', stream_info.drm.licence_key)
+                item.setProperty('inputstream.adaptive.license_key', stream_info.drm.licence_key.to_string())
                 item.setProperty('inputstream.adaptive.license_flags', stream_info.drm.flags)
                 if stream_info.drm.license_data:
                     item.setProperty('inputstream.adaptive.license_data', stream_info.drm.license_data)
