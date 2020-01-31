@@ -58,8 +58,7 @@ class IPTVUpdateService(xbmc.Monitor):
             self.addon = self.create_addon()  # refresh for updated settings!
             if not self.abortRequested():
                 try:
-                    res = self._update(self.notification_process)
-                    self.updated_after_settings_changed()
+                    res = self._update(True, self.notification_process)
 
                     if res == 1:
                         self.notify(_('playlist_created'), False)
@@ -72,6 +71,7 @@ class IPTVUpdateService(xbmc.Monitor):
             self.updating = False
 
     def _schedule_next(self, seconds):
+        # type: (int) -> None
         dt = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
         log('Next update %s' % dt)
         self._next_update = dt
@@ -102,6 +102,7 @@ class IPTVUpdateService(xbmc.Monitor):
         pass
 
     def notification_process(self, text, percent):
+        # type: (str, int) -> None
         if self.progress_dialog is None:
             if percent == 100:
                 return
@@ -117,10 +118,8 @@ class IPTVUpdateService(xbmc.Monitor):
     def dummy_notification_progress(self, text, percent):
         pass
 
-    def _update(self, callback=None):
-        # type: (Callable[[str, int], None] or None) -> None or int
-        if callback is None:
-            callback = self.dummy_notification_progress
+    def _update(self, configure, callback):
+        # type: (bool, Callable[[str, int], None] or None) -> None or int
 
         result = None
 
@@ -134,7 +133,7 @@ class IPTVUpdateService(xbmc.Monitor):
 
         callback(_('creating_playlist'), 0)
 
-        channels = self.fetch_channels(lambda percent: callback(_('creating_playlist'), percent // 2))
+        channels = self.fetch_channels(lambda percent: callback(_('creating_playlist'), int(percent // 2.5)))
 
         try:
             log('Creating playlist [%d channels]' % len(channels))
@@ -147,9 +146,9 @@ class IPTVUpdateService(xbmc.Monitor):
 
         if _epg_path:
             try:
-                callback(_('creating_epg'), 50)
+                callback(_('creating_epg'), 40)
 
-                epg = self.fetch_epg(channels, lambda percent: callback(_('creating_epg'), 50 + (percent // 2)))
+                epg = self.fetch_epg(channels, lambda percent: callback(_('creating_epg'), 40 + (percent // 2)))
                 log('Creating XMLTV EPG')
                 iptv.exports.create_epg(_epg_path, epg)
 
@@ -158,15 +157,23 @@ class IPTVUpdateService(xbmc.Monitor):
                 log(str(e))
                 raise EpgNotCreated()
 
+        if configure:
+            callback(_('configuring_addon'), 90)
+            self.updated_after_settings_changed()
+
         callback('', 100)
 
         return result
 
+    def update_interval(self):
+        # type: () -> int
+        return 12 * 60 * 60
+
     def tick(self):
         if datetime.datetime.now() > self._next_update:
             try:
-                self._schedule_next(12 * 60 * 60)
-                self._update()
+                self._schedule_next(self.update_interval())
+                self._update(False, self.dummy_notification_progress if xbmc.Player().isPlaying() else self.notification_process)
             except UserNotDefinedException:
                 pass
             except NetConnectionError:
