@@ -69,11 +69,11 @@ class IPTVAddon(xbmcaddon.Addon):
 
         if type(stream_info.drm) is WidevineDRM:
             import inputstreamhelper
-            is_helper = inputstreamhelper.Helper(stream_info.protocol, drm=stream_info.drm)
+            is_helper = inputstreamhelper.Helper(stream_info.drm.manifest_type, drm='com.widevine.alpha')
             if is_helper.check_inputstream():
                 item = xbmcgui.ListItem(path=stream_info.url)
                 item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
-                item.setProperty('inputstream.adaptive.manifest_type', stream_info.protocol)
+                item.setProperty('inputstream.adaptive.manifest_type', stream_info.drm.manifest_type)
                 item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
                 item.setProperty('inputstream.adaptive.license_key', stream_info.drm.licence_key.to_string())
                 item.setProperty('inputstream.adaptive.license_flags', stream_info.drm.flags)
