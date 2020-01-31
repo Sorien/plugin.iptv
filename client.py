@@ -40,7 +40,7 @@ class WidevineLicenceKey(Base):
 
     def to_string(self):
         return '%s|%s|%s|%s' % (self.license_server_url, self.post_data,
-                                '&'.join(['%s=%s' % (k, v) for (k, v) in self.headers]), self.response)
+                                '&'.join(['%s=%s' % (k, v) for (k, v) in self.headers.items()]), self.response)
 
 
 class WidevineDRM(Base):

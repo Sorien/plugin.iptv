@@ -86,7 +86,8 @@ class IPTVAddon(xbmcaddon.Addon):
                 if stream_info.user_agent:
                     stream_info.headers.update({'User-Agent': stream_info.user_agent})
                 if stream_info.headers:
-                    item.setProperty('inputstream.adaptive.stream_headers', '&'.join(['%s=%s' % (k, v) for (k, v) in stream_info.headers]))
+                    item.setProperty('inputstream.adaptive.stream_headers', '&'.join(['%s=%s' % (k, v) for (k, v) in
+                                                                                      stream_info.headers.items()]))
                 if stream_info.drm.media_renewal_url:
                     item.setProperty('inputstream.adaptive.media_renewal_url', stream_info.drm.media_renewal_url)
                 if stream_info.drm.media_renewal_time > 0:
@@ -98,7 +99,7 @@ class IPTVAddon(xbmcaddon.Addon):
             if stream_info.user_agent:
                 stream_info.headers.update({'User-Agent': stream_info.user_agent})
             if stream_info.headers:
-                stream_info.url += '|%s' % ('&'.join(['%s=%s' % (k, v) for (k, v) in stream_info.headers]))
+                stream_info.url += '|%s' % ('&'.join(['%s=%s' % (k, v) for (k, v) in stream_info.headers.items()]))
             item = xbmcgui.ListItem(path=stream_info.url)
             xbmcplugin.setResolvedUrl(self._handle, True, item)
             return
