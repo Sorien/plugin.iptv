@@ -96,7 +96,7 @@ class IPTVUpdateService(xbmc.Monitor):
         # type: (Channel, bool) -> str
         if not is_catchup:
             return self.addon.url_for(self.addon.play_channel_route, channel.id)
-        return self.addon.url_for(self.addon.play_programme_by_time_route, channel.id, '${start}', '${stop}')
+        return self.addon.url_for(self.addon.play_programme_by_time_route, channel.id, '${start}', '${end}')
 
     def prepare_update(self):
         pass

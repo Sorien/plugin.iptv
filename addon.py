@@ -29,7 +29,7 @@ class IPTVAddon(xbmcaddon.Addon):
         self._router.route("/")(self.index_route)
         self._router.route("/play-channel/<channel_id>")(self.play_channel_route)
         self._router.route("/play-programme/<programme_id>")(self.play_programme_route)
-        self._router.route("/play-programme-catchup/<channel_id>-<start>-<stop>")(self.play_programme_by_time_route)
+        self._router.route("/play-programme-catchup/<channel_id>-<start>-<end>")(self.play_programme_by_time_route)
         self._router.route('/channels')(self.channels_route)
         self._router.route('/archive')(self.archive_route)
         self._router.route('/archive/<channel_id>-<channel_name>')(self.archive_days_route)
@@ -112,10 +112,12 @@ class IPTVAddon(xbmcaddon.Addon):
     def play_programme_route(self, programme_id):
         self._play(self.programme_stream_info(programme_id))
 
-    def play_programme_by_time_route(self, channel_id, start, stop):
-        epg = self.epg([channel_id], start, stop)
+    def play_programme_by_time_route(self, channel_id, start, end):
+        start = datetime.utcfromtimestamp(int(start))
+        end = datetime.utcfromtimestamp(int(end))
+        epg = self.epg([channel_id], start, end)
         for program in epg[channel_id]:
-            if start <= program.start_time and program.end_time <= stop:
+            if start <= program.start_time and program.end_time <= end:
                 self.play_programme_route(program.id)
 
     def add_index_directory_items(self):
