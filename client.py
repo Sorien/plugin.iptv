@@ -71,7 +71,8 @@ class Programme(Base):
         self.end_time = None  # type: datetime or None
         self.title = ''
         self.description = ''
-        self.cover = ''
+        self.thumbnail = ''
+        self.poster = ''
         self.duration = 0
         self.genres = []  # type: List[str]
         self.actors = []  # type: List[str]
@@ -80,6 +81,7 @@ class Programme(Base):
         self.producers = []  # type: List[str]
         self.seasonNo = None
         self.episodeNo = None
+        self.year = None  # type: int or None
         self.is_replyable = False
         # programme metadata
         self.metadata = {}  # type: Dict[str, int]

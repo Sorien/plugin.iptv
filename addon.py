@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
+import time
+
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
@@ -175,6 +177,12 @@ class IPTVAddon(xbmcaddon.Addon):
             import time as ptime
             return datetime(*(ptime.strptime(date_string, format)[0:6]))
 
+    def _utc2local(self, utc):
+        # type: (datetime) -> datetime
+        epoch = time.mktime(utc.timetuple())
+        offset = datetime.fromtimestamp(epoch) - datetime.utcfromtimestamp(epoch)
+        return utc + offset
+
     def archive_programmes_route(self, channel_id, channel_name, day):
         day = self._strptime(day, '%m-%d-%Y')
         next_day = day + timedelta(days=1)
@@ -193,16 +201,40 @@ class IPTVAddon(xbmcaddon.Addon):
         if epg:
             for programme in epg[channel_id]:
                 if programme.is_replyable:
-                    title = programme.start_time.strftime('%H:%M')
-                    title = title + ' - ' + programme.title
+                    title = self._utc2local(programme.start_time).strftime('%H:%M') + ' - ' + programme.title
                     list_item = xbmcgui.ListItem(label=title)
-                    list_item.setInfo('video', {
+
+                    video_info = {
                         'title': programme.title,
                         'plot': programme.description,
                         'duration': programme.duration
-                    })
-                    if programme.cover:
-                        list_item.setArt({'thumb': programme.cover, 'icon': programme.cover})
+                    }
+
+                    if programme.episodeNo:
+                        video_info['episode'] = programme.episodeNo
+
+                    if programme.seasonNo:
+                        video_info['season'] = programme.seasonNo
+
+                    if programme.year:
+                        video_info['year'] = programme.year
+
+                    if programme.actors:
+                        video_info['cast'] = programme.actors
+
+                    if programme.directors:
+                        video_info['director'] = programme.directors[0]
+
+                    list_item.setInfo('video', video_info)
+
+                    art_info = {}
+                    if programme.thumbnail:
+                        art_info = {'thumb': programme.thumbnail, 'icon': programme.thumbnail}
+
+                    if programme.poster:
+                        art_info['poster'] = programme.poster
+
+                    list_item.setArt(art_info)
 
                     url = self.url_for(self.play_programme_route, programme.id)
                     list_item.setProperty('IsPlayable', 'true')
