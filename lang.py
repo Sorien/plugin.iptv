@@ -49,6 +49,29 @@ _lang['sk']['configuring_addon'] = 'Konfigurujem doplnok'
 _lang['sk']['iptv_simple_not_installed'] = 'Doplnok IPTV Simple Client nie je nainštalovaný'
 _lang['sk']['iptv_simple_configure'] = 'Upraviť konfiguráciu doplnku IPTV Simple Client podľa {}'
 
+_lang['cs'] = {}
+_lang['cs']['playlist_created'] = 'M3U Playlist byl vytvořený'
+_lang['cs']['playlist_and_epg_created'] = 'M3U Playlist a EPG byli vytvořené'
+_lang['cs']['playlist_or_epg_not_created'] = 'M3U Playlist nebo EPG se nepodařilo vytvořit'
+_lang['cs']['live_tv'] = 'Živé vysílání'
+_lang['cs']['archive'] = 'Archiv'
+_lang['cs']['today'] = 'dnes'
+_lang['cs']['yesterday'] = 'včera'
+_lang['cs']['day_1'] = 'pondělí'
+_lang['cs']['day_2'] = 'úterý'
+_lang['cs']['day_3'] = 'středa'
+_lang['cs']['day_4'] = 'čtvrtek'
+_lang['cs']['day_5'] = 'pátek'
+_lang['cs']['day_6'] = 'sobota'
+_lang['cs']['day_7'] = 'neděle'
+_lang['cs']['day_after'] = 'další den'
+_lang['cs']['day_before'] = 'předchozí den'
+_lang['cs']['creating_playlist'] = 'Vytvářím M3U Playlist'
+_lang['cs']['creating_epg'] = 'Vytvářím EPG'
+_lang['cs']['configuring_addon'] = 'Konfigurace doplňku'
+_lang['cs']['iptv_simple_not_installed'] = 'Doplněk IPTV Simple Client není nainstalovaný'
+_lang['cs']['iptv_simple_configure'] = 'Upravit konfiguraci doplňku IPTV Simple Client podle {}'
+
 _code = xbmc.getLanguage(xbmc.ISO_639_1)
 
 
