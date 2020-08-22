@@ -45,7 +45,6 @@ class WidevineLicenceKey(Base):
 
 class WidevineDRM(Base):
     def __init__(self):
-        self.manifest_type = ''  # 'mpd', 'ism' or 'hls'
         self.licence_key = WidevineLicenceKey()
         self.license_data = ''
         self.server_certificate = ''  # base64 encoded string
@@ -57,6 +56,7 @@ class WidevineDRM(Base):
 class StreamInfo(Base):
     def __init__(self):
         self.url = ''
+        self.manifest_type = ''  # m3u, 'mpd', 'ism' or 'hls'
         self.drm = None  # type: None or WidevineDRM
         self.max_bandwidth = None
         self.user_agent = ''
