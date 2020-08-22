@@ -63,7 +63,7 @@ def create_epg(file_name, epg):
                 if p.thumbnail:
                     file.write('<icon src="%s"/>\n' % html_escape(p.thumbnail))
                 if p.genres:
-                    file.write('<category>%s</category>\n' % ', '.join(p.genres))
+                    file.write('<category>%s</category>\n' % html_escape(', '.join(p.genres)))
                 if p.actors or p.directors or p.writers or p.producers:
                     file.write('<credits>\n')
                     for actor in p.actors:
