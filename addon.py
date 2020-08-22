@@ -69,7 +69,7 @@ class IPTVAddon(xbmcaddon.Addon):
             xbmcplugin.setResolvedUrl(self._handle, False, xbmcgui.ListItem())
             return
 
-        if type(stream_info.drm) is WidevineDRM:
+        if isinstance(stream_info.drm, WidevineDRM):
             import inputstreamhelper
             is_helper = inputstreamhelper.Helper(stream_info.drm.manifest_type, drm='com.widevine.alpha')
             if is_helper.check_inputstream():

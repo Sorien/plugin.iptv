@@ -39,8 +39,8 @@ class WidevineLicenceKey(Base):
         self.response = ''
 
     def to_string(self):
-        return '%s|%s|%s|%s' % (self.license_server_url, self.post_data,
-                                '&'.join(['%s=%s' % (k, v) for (k, v) in self.headers.items()]), self.response)
+        return '%s|%s|%s|%s' % (self.license_server_url, '&'.join(['%s=%s' % (k, v) for (k, v) in self.headers.items()]),
+                                self.post_data, self.response)
 
 
 class WidevineDRM(Base):
@@ -51,6 +51,7 @@ class WidevineDRM(Base):
         self.server_certificate = ''  # base64 encoded string
         self.media_renewal_url = ''
         self.media_renewal_time = 0
+        self.flags = ''
 
 
 class StreamInfo(Base):
